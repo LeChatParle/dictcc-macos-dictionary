@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, re, string, codecs, datetime, os, locale, urllib, argparse, cgi, locale, shutil
+import sys, re, datetime, os, urllib.parse, argparse, shutil
 
 scriptVersion = "3.0"
 scriptName = "dict.cc Dictionary Generator for MacOS"
@@ -41,9 +41,6 @@ def main(argv):
     print("  https://github.com/bernhardc/dictcc-macos-dictionary")
     print("")
     
-    reload(sys)  
-    sys.setdefaultencoding('utf8')
-        
     parser = argparse.ArgumentParser(description=scriptName)
 
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Enables debug output')
@@ -71,11 +68,11 @@ def main(argv):
         return
 
         
-    arguments.codename = string.replace(string.lower(arguments.languagepair), '-', '')
+    arguments.codename = arguments.languagepair.lower().replace('-', '')
     arguments.languages = arguments.languagepair.lower().split('-')
 
     # DE-IT -> dtit.dict.cc -> Will work for online lookups
-    if(string.lower(arguments.languagepair)=="de-en"):
+    if(arguments.languagepair.lower()=="de-en"):
         arguments.urlprefix = ""
     else:
         arguments.urlprefix = arguments.codename
@@ -85,9 +82,7 @@ def main(argv):
 
     arguments.dictionarynameshort = arguments.languagepair.upper() + ' (dict.cc)'
 
-    # enable printing of unicode strings without using .encode() millions of times
-    print("Switching sys.stdout to utf-8...")
-    sys.stdout = codecs.getwriter("utf-8")(sys.stdout);
+    # Python 3 handles unicode natively, no stdout wrapping needed
 
     arguments.buildfolder = "build"
     arguments.stagefolder = arguments.buildfolder + "/stage"
@@ -108,15 +103,15 @@ def main(argv):
     
     
     if(arguments.debug):
-        print "Debug:            ", arguments.debug
-        print "Subset:           ", arguments.generatesubset
-        print "Filename:         ", arguments.filename
-        print "Codename:         ", arguments.codename
-        print "URLPrefix:        ", arguments.urlprefix
-        print "Language Pair:    ", arguments.languagepair
-        print "Dictionary Name:  ", arguments.dictionaryname
-        print "Short Name:       ", arguments.dictionarynameshort
-        print "Encoding:         ", arguments.encoding
+        print("Debug:            ", arguments.debug)
+        print("Subset:           ", arguments.generatesubset)
+        print("Filename:         ", arguments.filename)
+        print("Codename:         ", arguments.codename)
+        print("URLPrefix:        ", arguments.urlprefix)
+        print("Language Pair:    ", arguments.languagepair)
+        print("Dictionary Name:  ", arguments.dictionaryname)
+        print("Short Name:       ", arguments.dictionarynameshort)
+        print("Encoding:         ", arguments.encoding)
     
     
     readVocabulary(arguments.filename)
@@ -133,15 +128,15 @@ def createPackage():
     
     packageName = arguments.dictionaryname + ".pkg"
     
-    command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.codename, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
+    command = " ".join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.codename, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""])
     os.system(command)
     
-    print ""
-    print ""
-    print "Successfully generated dictionary installation package: "
-    print ""
-    print "  " + arguments.distfolder + "/" + packageName
-    print ""
+    print("")
+    print("")
+    print("Successfully generated dictionary installation package: ")
+    print("")
+    print("  " + arguments.distfolder + "/" + packageName)
+    print("")
 
 
 def updateInPreferences():
@@ -157,15 +152,15 @@ def updateInPreferences():
     s += '<p>https://www.bernhardcaspar.de/dictcc</p>'
 
     if(arguments.debug):
-        print s
-    
+        print(s)
+
     return s
 
 def createPlist():
     global arguments
     print("Creating plist")
     
-    output = codecs.open(arguments.buildfolder + "/dictcc.plist","w","utf-8")
+    output = open(arguments.buildfolder + "/dictcc.plist", "w", encoding="utf-8")
     output.write(u'''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -207,12 +202,12 @@ def createPlist():
 
 
 def createDictionary():
-    global arguments1
-    print "Calling external script to create dictionary"
+    global arguments
+    print("Calling external script to create dictionary")
     # -v 10.5 -> bigger packages
     # -v 10.6 -> smaller packages
     # arguments.osxversion
-    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v "+arguments.osxversion, '"'+arguments.dictionaryname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
+    command = " ".join(["./Dictionary\\ Development\\ Kit/bin/build_dict.sh", "-v "+arguments.osxversion, '"'+arguments.dictionaryname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"])
     # print "% "+ command
     os.system(command)
     
@@ -222,17 +217,17 @@ def createDictionary():
 #
 #   styles meta information of dictionary entries (e.g. "{colloq.}")
 def style(text):
-    nestedCurlyBrackets = re.compile('\{([^}]+)\{([^}]+)\}')
+    nestedCurlyBrackets = re.compile(r'\{([^}]+)\{([^}]+)\}')
     if not nestedCurlyBrackets.search(text):
-        text = re.sub('(\{[^}]+\})', r' <i>\1</i>',text)
-    
-    nestedRoundBrackets = re.compile('\(([^)]+)\(([^)]+)\)')
+        text = re.sub(r'(\{[^}]+\})', r' <i>\1</i>',text)
+
+    nestedRoundBrackets = re.compile(r'\(([^)]+)\(([^)]+)\)')
     if not nestedRoundBrackets.search(text):
-        text = re.sub('(\([^)]+\))', r' <span class="a">\1</span>',text)
-    
-    nestedSquareBrackets = re.compile('\[([^]]+)\[([^]]+)\]')
+        text = re.sub(r'(\([^)]+\))', r' <span class="a">\1</span>',text)
+
+    nestedSquareBrackets = re.compile(r'\[([^]]+)\[([^]]+)\]')
     if not nestedSquareBrackets.search(text):
-        text = re.sub('(\[[^]]+\])', r' <span class="b">\1</span>',text)
+        text = re.sub(r'(\[[^]]+\])', r' <span class="b">\1</span>',text)
     
     return text
 
@@ -251,9 +246,9 @@ def addEntry(word, definition, entryType):
     # prepare index string // remove all kinds of additional descriptions
     index = word
     if index.startswith("to "): index =  index[3:] # strip (to)
-    index = re.sub('(\([^)]+\))', r'',index)
-    index = re.sub('(\{[^}]+\})', r'',index)
-    index = re.sub('(\[[^]]+\])', r'',index)
+    index = re.sub(r'(\([^)]+\))', r'',index)
+    index = re.sub(r'(\{[^}]+\})', r'',index)
+    index = re.sub(r'(\[[^]]+\])', r'',index)
     index = re.sub('  ', r' ', index) # remove
     index = index.strip()   # .lower()
     index = index.lower()
@@ -270,7 +265,7 @@ def addEntry(word, definition, entryType):
     #dictionary[index][entryType][entries]
 
     # get entry from dictionary    
-    if dictionary.has_key(index):
+    if index in dictionary:
         entry = dictionary[index]
     else:
         entry = {}      # not found? create new entry
@@ -281,7 +276,7 @@ def addEntry(word, definition, entryType):
 #        subentry = {}
 
     # add translation to entry 
-    if entry.has_key(word):
+    if word in entry:
         entry[word].append(definitionx)
     else:
         entry[word]=[definitionx]
@@ -299,12 +294,12 @@ def readVocabulary(filename):
     comments=0
     errors=0
     try:
-        input = codecs.open(filename, "r", arguments.encoding)
+        input = open(filename, "r", encoding=arguments.encoding)
     except IOError:
-        print '*** File "' + filename + '" not found or other error.'
+        print('*** File "' + filename + '" not found or other error.')
         return False
     else:
-        print 'Processing "'+filename+'"'
+        print('Processing "'+filename+'"')
         for line in input:
             lines=lines+1
 
@@ -319,7 +314,7 @@ def readVocabulary(filename):
             # throw away my email address
             if (re.search('lipflip', line) or re.search('herun7erg', line)):
                 if arguments.debug:
-                    print "  Found fingerprint: " + line
+                    print("  Found fingerprint: " + line)
                 continue
 
             # HTML escape some incompatible characters
@@ -338,7 +333,7 @@ def readVocabulary(filename):
             if len(data)<2:
                 errors = errors+1
                 if arguments.debug:
-                    print "Error: "+line
+                    print("Error: "+line)
                 continue
 
             left = data[0].strip();
@@ -362,19 +357,19 @@ def readVocabulary(filename):
             try:
                 addEntry(left, right, entryType);
             except:
-                dsfsf=5
+                pass
                 #if arguments.debug:
                    # print "addEntry('%s', '%s', '%s') failed!" % (left, right, entryType)
                 #errors =  errors+1
             try:
                 addEntry(right, left, entryType);
             except:
-                dsfsf=5
+                pass
                 #if arguments.debug:
                    # print "addEntry('%s', '%s', '%s') failed!" % (right, left, entryType)
                 #errors =  errors+1
 
-        input.close
+        input.close()
         print("")
         print("  Read %s lines with %s comments. Errors: %s" % ( lines, comments, errors) )
         print("  %s unique pages in dictionary (probably)." % len(dictionary))
@@ -412,16 +407,16 @@ def generateIndexEntries(entry):
     text = entry
     
     # remove  additional descriptions
-    text = re.sub('(\{[^}]+\})', r'',text)
-    text = re.sub('(\[[^]]+\])', r'',text)
-    
+    text = re.sub(r'(\{[^}]+\})', r'',text)
+    text = re.sub(r'(\[[^]]+\])', r'',text)
+
     # remove info "(ganz) gewöhnlich" => "gewöhnlich"
-    reducedText = re.sub('(\([^)]+\))', r'',text)
+    reducedText = re.sub(r'(\([^)]+\))', r'',text)
     variants.append(reducedText)
-    
+
     # if something was changed add alternative: "(info) blupp -> info blupp" (without braces)
     if (reducedText != text):
-        extendedText = re.sub('\(([^)]+)\)', r'\g<1>', text)
+        extendedText = re.sub(r'\(([^)]+)\)', r'\g<1>', text)
         variants.append ( extendedText )
 
     startWords = [
@@ -523,13 +518,13 @@ def renderEntry(ID, index):
 
 # Generate XML output
 def generateXML(filename):
-    print "Generating XML output"
+    print("Generating XML output")
     global statistics, arguments, dictionary, arguments, scriptVersion, scriptName
 
     # prepare output
     if (arguments.debug):
-        print "  Filename: " + filename
-    output = codecs.open(filename,"w","utf-8")
+        print("  Filename: " + filename)
+    output = open(filename, "w", encoding="utf-8")
 
     # XML Header
     output.write(u'''<?xml version="1.0" encoding="UTF-8"?>
@@ -596,7 +591,7 @@ Sämtliche Aspekte bezüglich der Übersetzungsdaten von dict.cc, die in diesen 
     
     # Finish up
     output.write(u'''</d:dictionary>\n''');
-    output.close
+    output.close()
     print ("  Wrote %s entries to '%s'" % (count, filename) )
     if(arguments.debug):
         print ("  Entries   : %s" % (statistics['entries']));
