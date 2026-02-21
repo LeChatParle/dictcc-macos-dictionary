@@ -80,7 +80,7 @@ def main(argv):
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
     arguments.dictionarynameencoded = arguments.dictionaryname
 
-    arguments.dictionarynameshort = arguments.languagepair.upper() + ' (dict.cc)'
+    arguments.dictionarynameshort = arguments.languagepair.upper()
 
     # Python 3 handles unicode natively, no stdout wrapping needed
 
