@@ -40,6 +40,9 @@ Philipp Brauner/Lipflip<br/>
    
 Wolfgang Reszel<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://www.tekl.de/deutsch/Lexikon-Plugins.html
+
+Jeremy Edwards<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://ebj.world/Homepage/Welcome!
    
 ## License
 This project is released under GPL license
