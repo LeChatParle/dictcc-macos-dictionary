@@ -1,7 +1,10 @@
 
 ## Changelog
 
-<br/>
+2026-02-21 - v4.0 - Jeremy Edwards
+- Updated script to work with Python 3
+- Changed the way it generated the dictionary shortname to no longer include "(dict.cc)"
+- Incremented major version number since changing the Python version is a breaking change
 
 2017-05-20 - v3.0 - Bernhard Caspar
 - 1.404.624 entries in DE-EN
