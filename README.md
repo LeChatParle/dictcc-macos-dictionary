@@ -1,90 +1,36 @@
-# dict.cc Dictionary Generator for MacOS
+# Dict.cc Dictionary Generator for MacOS
 
 ![Screenshot](screenshot.png)
 
 <br/>
-This is a Python script to create a MacOS (OS X) dictionary from dict.cc word lists. The generated dictionary is a regular dictionary for the MacOS stock Dictionary app, which means you can also look up words using Sportlight or anywhere via 3-Finger-Tap.
 
-<br/>
-<br/>
-The dictionary itself can be downloaded from (Link)
-
-<br/>
-<br/>
-Currently the following languages are available (built in May 2017):
-
-- German - English
-- German - Spanish
-- German - French
-- German - Icelandic
-- German - Italian
-- German - Swedish
-- German - Russian
-- German - Portugese
+This is a Python script to create a macOS dictionary from Dict.cc word lists. The generated dictionary is a regular dictionary for the macOS stock Dictionary app, which means you can also look up words using Spotlight or anywhere via 3-Finger-Tap.
 
 <br/>
 <br/>
 
-## Installation
+## How to
 
-Download a dictionary or build one by yourself (build instructions see below).<br/>
-Double click the dictionary (.pkg) and follow the installer 
-Open the Dictionary app</br>
-Go to Preferences<br/>
-Activate the dictionary by checking the checkbox (the new dictionary will be at the bottom of the list)
+1. You'll need to download a Dictionary text file from Dict.cc. You can request a download from: http://www1.dict.cc/translation_file_request.php
+2. Download this repository, and place the text file you downloaded from Dict.cc into the same folder as the files downloaded from this repo
+3. Name the text file according to the to the two character language codes for the language pair, e.g. "EN-DE.txt" if your dictionary is an English-German dictionary
+4. Run this python script in the Terminal following the pattern of the below example command (if you don't have Python3 installed, do that first)
+5. Once this script completes, you will find a .pkg file in a folder called "dist". Open this installer to install your dictionary into the Dictionary app
+6. Now, if the Dictionary app is already opened, relaunch it
+7. You should now be able to go to the settings for the Dictionary app and enable your new dictionary
+8. Note: Dict.cc does not allow you to distribute their dictionary data. You can only use this on your own personal computers
 
+### Example Command
 
-<br/>
-<br/>
+This is an example command you could use if you were making an Icelandic to English dictionary. You will update all three parts of `IS-EN.txt IS-EN "Icelandic-English"` according to what you are doing. The first argument is the name of the text file you just renamed. The second argument is the two letter code names for the languages (this will show up as the short name in the Dictionary app). Then, the third argument is the long name of your dictionary, which will also display in the Dictionary app. 
 
-## Build Instructions
-
-Get dict.cc word list<br/>
-http://www1.dict.cc/translation_file_request.php<br/>
-copy to project root<br/>
-rename to "de-en.txt" for example<br/>
-
-Apple Dictionary Developer Kit<br/>
-https://developer.apple.com/download/more/<br/>
-"Additional Tools for Xcode 8.2"<br/>
-open .dmg<br/>
-Utilities/Dictionary Development Kit<br/>
-copy to /Developer/Extras/Dictionary Development Kit<br/>
-
-Run Python build script (written in Python 2)<br/>
-for example: python createpackages.py -d de-en.txt DE-EN "Deutsch-Englisch (dict.cc)"
-
-
-
-
-3. Download dict.cc's database(s) in UTF-8 encoding and place it in the
-   dictcc-dictionary-distrib directory.
-   You only need one database for each language pair (e.g. DE-EN, EN-DE is not
-   required).
-4. Open a Terminal and "cd" to the dictcc-dictionary-distrib directory.
-5. Launch the build script:
-   user$ ./createpackages.py $filename $short $long
-   Where $filename is the filename of the downloaded database, $shortname
-   is the short name of your dictionary (e.g. "DE-EN"), and $longname is the
-   long form of your dictionary's name (e.g. "Deutsch Englisch").
-   
-   user$ ./createpackages.py -dx DE-EN.txt DE-EN "Deutsch Englisch"
-   
-   There are some flags that toggle debug output (-d) or generate only a
-   minimal subset of the dictionary (-x).
-6. After some minutes or hours the dictionary can be found in
-   ./objects/$longname.
-   It can be installed by moving it into /Library/Dictionaries or
-   /Users/$username/Library/Dictionaries/
-7. Start/restart Dictionary.App.
-8. Keep in mind that the license of dict.cc prohibits the distribution of the
-   dict.cc database. Thus you are not allowed to distribute your dictionary.
-
-
+`python3 createpackages.py -d IS-EN.txt IS-EN "Icelandic-English"`
 
 <br/>
 
 ## Project Credits
+
+This is a fork made by Jeremy Edwards of a a project originally developed by the below developers. I have only updated this to work with a more recent version of Python
 
 Bernhard Caspar<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.bernhardcaspar.de/dictcc
@@ -96,9 +42,5 @@ Philipp Brauner/Lipflip<br/>
 Wolfgang Reszel<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://www.tekl.de/deutsch/Lexikon-Plugins.html
    
-
-	
 ## License
 This project is released under GPL license
-
-
