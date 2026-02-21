@@ -7,7 +7,6 @@
 This is a Python script to create a macOS dictionary from Dict.cc word lists. The generated dictionary is a regular dictionary for the macOS stock Dictionary app, which means you can also look up words using Spotlight or anywhere via 3-Finger-Tap.
 
 <br/>
-<br/>
 
 ## How to
 
@@ -30,7 +29,7 @@ This is an example command you could use if you were making an Icelandic to Engl
 
 ## Project Credits
 
-This is a fork made by Jeremy Edwards of a a project originally developed by the below developers. I have only updated this to work with a more recent version of Python
+This is a fork made by Jeremy Edwards of a project originally developed by the below developers. I have only updated this to work with a more recent version of Python
 
 Bernhard Caspar<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.bernhardcaspar.de/dictcc
