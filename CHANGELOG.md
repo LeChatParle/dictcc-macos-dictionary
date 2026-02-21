@@ -3,6 +3,8 @@
 
 2026-02-21 - v4.0 - Jeremy Edwards
 - Updated script to work with Python 3
+- Updated script to look for Dictionary Development Kit in same folder as the script
+- Including the current version of the Dictionary Development Kit for easier use of this script
 - Changed the way it generated the dictionary shortname to no longer include "(dict.cc)"
 - Incremented major version number since changing the Python version is a breaking change
 
